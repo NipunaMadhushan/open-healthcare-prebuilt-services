@@ -27,12 +27,16 @@ public isolated function getOpenidConfigurations(string discoveryEndpoint) retur
     string discoveryEndpointUrl = "https://api.asgardeo.io/t/bifrost/oauth2/token/.well-known/openid-configuration";
     log:printInfo("SMART EP: " + discoveryEndpointUrl);
     http:Client discoveryEpClient = check new (discoveryEndpointUrl.toString());
-    OpenIDConfiguration openidConfiguration = {};
-    do {
-        openidConfiguration = check discoveryEpClient->/;
-    } on fail error err {
-        log:printInfo("Error while retrieving openid configuration: ", err);
+    OpenIDConfiguration|error openidConfiguration = {};
+    openidConfiguration = check discoveryEpClient->/;
+    if (openidConfiguration is error) {
+        log:printInfo("Error while retrieving openid configuration: ", openidConfiguration);
     }
+    // do {
+    //     openidConfiguration = check discoveryEpClient->/;
+    // } on fail error err {
+    //     log:printInfo("Error while retrieving openid configuration: ", err);
+    // }
     log:printInfo("Retrieving openid configuration ended");
     return openidConfiguration;
 }
